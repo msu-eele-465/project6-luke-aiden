@@ -1,10 +1,11 @@
 
 #include <msp430.h>
+#include <keypad.h>
 #include <intrinsics.h>
 #include <driverlib.h>
 #include <math.h>
 
-unsigned char data = 0x00;
+unsigned char data = 0x00;                    // code to be sent to peltier device
 
 int main(void)
 {
@@ -20,57 +21,53 @@ int main(void)
     P4OUT &= ~BIT3;
 
     PM5CTL0 &= ~LOCKLPM5;                     // Disable LPM
-
-
-
+    __enable_interrupt();
 
     while(1){
-        if("correct mode") {
+        //if(_read_keypad_char() == '*') { // doesn't work for some reason
+            switch(_read_keypad_char()) {
+                // Heat
+                case 'A' : P4OUT |= BIT3;
+                           P4OUT &= ~BIT2;
+                           data = 0x01;
+                           UCB0CTLW0 |= UCTXSTT;
+                           break;
 
-        
-        switch("keypad press") {
-            // Heat
-            case 'A' : P4OUT |= BIT3;
-                       P4OUT &= ~BIT2;
-                       data = 0x01;
-                       UCB0CTLW0 |= UCTXSTT;
-                       break;
+                // Cool
+                case 'B' : P4OUT |= BIT2;
+                           P4OUT &= ~BIT3;
+                           data = 0x02;
+                           UCB0CTLW0 |= UCTXSTT;
+                           break;
 
-            // Cool
-            case 'B' : P4OUT |= BIT2;
-                       P4OUT &= ~BIT3;
-                       data = 0x02;
-                       UCB0CTLW0 |= UCTXSTT;
-                       break;
+                // Match Ambient
+                case 'C' : data = 0x03;
+                           UCB0CTLW0 |= UCTXSTT;
+                           /*
+                            if hotter --> cool
+                            if cooler --> heat
+                           */
+                           break;
 
-            // Match Ambient
-            case 'C' : data = 0x03;
-                       UCB0CTLW0 |= UCTXSTT;
-                       /*
-                       if hotter --> cool
-                       if cooler --> heat
-                       */
-                       break;
+                // Off
+                case '1' : data = 0x00;
+                           UCB0CTLW0 |= UCTXSTT;
+                           P4OUT &= ~BIT2;
+                           P4OUT &= ~BIT3;
+                           //lock keypad (somehow)
+                           break; 
 
-            // Exit
-            case 'D' : data = 0x00;
-                       UCB0CTLW0 |= UCTXSTT;
-                       P4OUT &= ~BIT2;
-                       P4OUT &= ~BIT3;
-                       //lock keypad (somehow)
-                       break; 
-
-            default: break;
+                default: break;
 
         }
-    }
+    //}
     }
 }
 
 
 
 
-/*
+/* heartbeat led
 int main(void) {
 
     volatile uint32_t i;
