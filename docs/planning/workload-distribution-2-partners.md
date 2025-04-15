@@ -27,21 +27,21 @@ You will fill out this form:
 | The Peltier device can be configured to heat                                           | 2      |           |            |
 | The Peltier device can be configured to cool                                           | 2      |           |            |
 | The Peltier device can be configured to match the ambient temperature                  | 2      |           |            |
-| LCD displays the mode of operation                                                     | 2      |           |            |
-| Display  the mode string in the upper-left corner                                      | 1      |           |            |
-| Display the ambient temperature                                                        | 2      |           |            |
-| Refresh the temperature at least every 2 s                                             | 1      |           |            |
-| Display the temperature in the top-right corner                                        | 1      |           |            |
-| Display the temperature with a resolution of 0.1 C                                     | 1      |           |            |
-| Display the plant temperature                                                          | 2      |           |            |
-| Refresh the temperature at least every 2 s                                             | 1      |           |            |
-| Display the temperature in the bottom-right corner                                     | 1      |           |            |
-| Display the temperature with a resolution of 0.1 C                                     | 1      |           |            |
-| Display the window size                                                                | 2      |           |            |
-| Display the time spent in the current mode of operation                                | 2      |           |            |
-| Refresh the time at least every 1 s                                                    | 1      |           |            |
-| Display the seconds in the bottom row of the LCD                                       | 1      |           |            |
-| Display up to a 3-digit number                                                         | 1      |           |            |
+| LCD displays the mode of operation                                                     | 2      |      2    |            |
+| Display  the mode string in the upper-left corner                                      | 1      |      1    |            |
+| Display the ambient temperature                                                        | 2      |      2    |            |
+| Refresh the temperature at least every 2 s                                             | 1      |      1    |            |
+| Display the temperature in the top-right corner                                        | 1      |      1    |            |
+| Display the temperature with a resolution of 0.1 C                                     | 1      |      1    |            |
+| Display the plant temperature                                                          | 2      |      2    |            |
+| Refresh the temperature at least every 2 s                                             | 1      |      1    |            |
+| Display the temperature in the bottom-right corner                                     | 1      |      1    |            |
+| Display the temperature with a resolution of 0.1 C                                     | 1      |      1    |            |
+| Display the window size                                                                | 2      |      2    |            |
+| Display the time spent in the current mode of operation                                | 2      |      2    |            |
+| Refresh the time at least every 1 s                                                    | 1      |      1    |            |
+| Display the seconds in the bottom row of the LCD                                       | 1      |      1    |            |
+| Display up to a 3-digit number                                                         | 1      |      1    |            |
 | When the system is actively heating, the lights should fill to the right               | 2      |           |            |
 | When the system is actively cooling, the lights should fill to the left                | 2      |           |            |
 | When not actively heating or cooling, the lights should be off                         | 2      |           |            |
