@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "2355",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "2355",
+                "resourceId": "/2355"
+            }
+        },
+        {
+            "name": "lcd_slave",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "lcd_slave",
+                "resourceId": "/lcd_slave"
+            }
+        }
+    ]
+}

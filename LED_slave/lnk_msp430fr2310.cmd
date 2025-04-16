@@ -30,7 +30,7 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* Default linker command file for Texas Instruments MSP430FR2311
+* Default linker command file for Texas Instruments MSP430FR2310
 *
 *****************************************************************************/
 
@@ -58,7 +58,7 @@ MEMORY
 {
     BSL0                    : origin = 0x1000, length = 0x800
     RAM                     : origin = 0x2000, length = 0x400
-    FRAM                    : origin = 0xF100, length = 0xE80
+    FRAM                    : origin = 0xF800, length = 0x780
     BSL1                    : origin = 0xFFC00, length = 0x400
     JTAGSIGNATURE           : origin = 0xFF80, length = 0x0004, fill = 0xFFFF
     BSLSIGNATURE            : origin = 0xFF84, length = 0x0004, fill = 0xFFFF
@@ -240,6 +240,6 @@ SECTIONS
 /* INCLUDE PERIPHERALS MEMORY MAP                                           */
 /****************************************************************************/
 
--l msp430fr2311.cmd
+-l msp430fr2310.cmd
 
 

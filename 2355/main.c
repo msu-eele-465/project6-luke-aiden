@@ -1,82 +1,138 @@
-/* --COPYRIGHT--,BSD
- * Copyright (c) 2018, Texas Instruments Incorporated
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * *  Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * *  Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * *  Neither the name of Texas Instruments Incorporated nor the names of
- *    its contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * --/COPYRIGHT--*/
-//***************************************************************************************
-//  Blink the LED Demo - Software Toggle P1.0
-//
-//  Description; Toggle P1.0 inside of a software loop using DriverLib.
-//  ACLK = n/a, MCLK = SMCLK = default DCO
-//
-//                MSP4302355
-//             -----------------
-//         /|\|              XIN|-
-//          | |                 |
-//          --|RST          XOUT|-
-//            |                 |
-//            |             P1.0|-->LED
-//
-//  E. Chen
-//  Texas Instruments, Inc
-//  May 2018
-//  Built with Code Composer Studio v8
-//***************************************************************************************
 
-#include <driverlib.h>
+#include <msp430.h>
+#include <stdbool.h>
+#include "status_led.h"
+#include "keypad.h"
+#include "heartbeat.h"
+#include "i2cMaster.h"
+#include "pattern.h"
+#include "temp.h"
+#include "math.h"
+#include "stdio.h"
 
-int main(void) {
+// globals
+#define _BITS4TO6 112
+int pattern = 10;
+volatile int prev_pattern = 10;
+int keypad_input;
+uint8_t patternVal;
+unsigned int ADC_Value;
+double temp;
+int toggle;
+int mode;
 
-    volatile uint32_t i;
 
-    // Stop watchdog timer
-    WDT_A_hold(WDT_A_BASE);
 
-    // Set P1.0 to output direction
-    GPIO_setAsOutputPin(
-        GPIO_PORT_P1,
-        GPIO_PIN0
-        );
 
-    // Disable the GPIO power-on default high-impedance mode
-    // to activate previously configured port settings
-    PMM_unlockLPM5();
+
+int main(void)
+{
+    WDTCTL = WDTPW | WDTHOLD;               // Stop watchdog timer
+    HeartBeat_init();
+    init_status_led_timer(&locked_rgb);
+    i2c_init();
+    init_temp();
 
     while(1)
     {
-        // Toggle P1.0 output
-        GPIO_toggleOutputOnPin(
-            GPIO_PORT_P1,
-            GPIO_PIN0
-            );
-
-        // Delay
-        for(i=10000; i>0; i--);
+        if (locked)
+        {
+            P4OUT &= ~_BITS4TO6;
+            clear_led_bar();
+            TB0CCR0 = 32768;
+            locked = check_unlock();
+            TB3CCTL4 &= ~CCIE;
+            TB3CCTL5 &= ~CCIE;
+            TB3CCTL6 &= ~CCIE;
+        }
+        else 
+        {
+            set_status_rgb(&unlocked_rgb);
+            __delay_cycles(10000);
+            char test = _read_keypad_char();
+            keypad_input = input_decide();
+            if (keypad_input == 10)
+            {
+                pattern = prev_pattern;
+            }
+            else 
+            {
+                pattern = keypad_input;
+            }
+            if(test == 'D'){
+                locked = true;
+            }
+            patternVal = get_outPut();
+            toggle = 0;
+           	UCB0TBCNT = 0x01;           // Send 1 byte of data
+            UCB0I2CSA = 0x0068;         // Slave address = 0x68
+            UCB0CTLW0 |= UCTXSTT;   // Generate START condition
+	        __delay_cycles(10000);
+        	UCB0TBCNT = 0x05;           // Send 1 byte of data
+            toggle = 1;
+            UCB0I2CSA = 0x0070;
+            UCB0CTLW0 |= UCTXSTT;
+            __delay_cycles(10000);
+        }
     }
+}
+
+
+
+void i2c_tx(void){
+    if(toggle){
+        convert_to_temp(ADC_Value);
+        UCB0TXBUF = thousands;
+        __delay_cycles(1000);
+        UCB0TXBUF = hundreds;
+        __delay_cycles(1000);
+        UCB0TXBUF = tens;
+        __delay_cycles(1000);
+        UCB0TXBUF = ones;
+        __delay_cycles(1000);
+        UCB0TXBUF = mode;
+    }else{
+        UCB0TXBUF = patternVal;
+    }
+}
+
+
+
+#pragma vector = TIMER0_B0_VECTOR
+__interrupt void ISR_TB0_CCR0(void)
+{
+    P6OUT ^= BIT6;
+    prev_pattern = pattern_decide(prev_pattern, pattern);
+    if (locked)
+    {
+        lock_count++;
+    }
+    else 
+    {
+//        prev_pattern = pattern_decide(prev_pattern, pattern);
+    }
+}
+
+#pragma vector = TIMER3_B0_VECTOR
+__interrupt void ISR_CRR0(void)
+{
+    status_led_timer_ccr0(locked);
+    ADCCTL0 |= ADCENC | ADCSC;
+}
+
+#pragma vector = TIMER3_B1_VECTOR
+__interrupt void ISR_higher_CCR(void)
+{
+    TB3_ISR_call(TB3IV);
+}
+
+#pragma vector=EUSCI_B0_VECTOR
+__interrupt void EUSCI_B0_I2C_ISR(void){
+    i2c_tx();
+}
+
+#pragma vector=ADC_VECTOR
+__interrupt void ADC_ISR(void){
+    ADC_Value = ADCMEM0;
+    ADCCTL0 &= ~ADCENC;
 }

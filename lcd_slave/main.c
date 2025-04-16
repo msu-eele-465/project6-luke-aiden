@@ -9,14 +9,14 @@ char thousands;
 char hundreds;
 char tens;
 char ones;
+int mode;
 
 
 //---------------LCD Functions-------------------------
 void pulse_enable(){
     P1OUT |= BIT0;           // E = 1
     __delay_cycles(50);      // Hold E high for a short time
-    P1OUT &= ~BIT0;          // E = 0
-    //__delay_cycles(50);      
+    P1OUT &= ~BIT0;          // E = 0      
 }
 
 
@@ -74,41 +74,157 @@ void lcd_start(void){
 }
 
 void write_mode(void){
-    write_nibble(0b00001000);       //Address 00
-    P1OUT &= ~BIT1;
-    pulse_enable();
-    write_nibble(0b00000000);
-    pulse_enable();
+    if(mode == 1){
+        //write 'match'
+        write_nibble(0b00001000);       //Address 00
+        P1OUT &= ~BIT1;
+        pulse_enable();
+        write_nibble(0b00000000);
+        pulse_enable();
 
-    write_nibble(0b00000100);       //Character M
-    P1OUT |= BIT1;
-    pulse_enable();
-    write_nibble(0b00001101);
-    pulse_enable();
+        write_nibble(0b00000100);       //Character M
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001101);
+        pulse_enable();
 
-    write_nibble(0b00000100);       //Character A
-    P1OUT |= BIT1;
-    pulse_enable();
-    write_nibble(0b00000001);
-    pulse_enable();
+        write_nibble(0b00000100);       //Character A
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000001);
+        pulse_enable();
 
-    write_nibble(0b00000101);       //Character T
-    P1OUT |= BIT1;
-    pulse_enable();
-    write_nibble(0b00000100);
-    pulse_enable();
+        write_nibble(0b00000101);       //Character T
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000100);
+        pulse_enable();
 
-    write_nibble(0b00000100);       //Character C
-    P1OUT |= BIT1;
-    pulse_enable();
-    write_nibble(0b00000011);
-    pulse_enable();
+        write_nibble(0b00000100);       //Character C
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000011);
+        pulse_enable();
 
-    write_nibble(0b00000100);       //Character H
-    P1OUT |= BIT1;
-    pulse_enable();
-    write_nibble(0b00001000);
-    pulse_enable();
+        write_nibble(0b00000100);       //Character H
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001000);
+        pulse_enable();
+    }else if(mode ==2){
+        //write 'heat'
+        write_nibble(0b00001000);       //Address 00
+        P1OUT &= ~BIT1;
+        pulse_enable();
+        write_nibble(0b00000000);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character H
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001000);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character E
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000101);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character A
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000001);
+        pulse_enable();
+
+        write_nibble(0b00000101);       //Character T
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000100);
+        pulse_enable();
+
+    }else if(mode == 3){
+        //write 'cool'
+        write_nibble(0b00001000);       //Address 00
+        P1OUT &= ~BIT1;
+        pulse_enable();
+        write_nibble(0b00000000);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character C
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000011);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character O
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001111);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character O
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001111);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character L
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001100);
+        pulse_enable();
+    }else if(mode == 4){
+        //write 'off'
+        write_nibble(0b00001000);       //Address 00
+        P1OUT &= ~BIT1;
+        pulse_enable();
+        write_nibble(0b00000000);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character O
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00001111);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character F
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000110);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character F
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000110);
+        pulse_enable();
+    }else if(mode == 5){
+        //write 'set'
+        write_nibble(0b00001000);       //Address 00
+        P1OUT &= ~BIT1;
+        pulse_enable();
+        write_nibble(0b00000000);
+        pulse_enable();
+
+        write_nibble(0b00000101);       //Character S
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000011);
+        pulse_enable();
+
+        write_nibble(0b00000100);       //Character E
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000101);
+        pulse_enable();
+
+        write_nibble(0b00000101);       //Character T
+        P1OUT |= BIT1;
+        pulse_enable();
+        write_nibble(0b00000100);
+        pulse_enable();
+    }
 }
 
 
@@ -190,9 +306,12 @@ void record_temp(void){
         return;
     }else if(count == 3){
         ones = (char)temp;
-        count = 0;
+        count += 1;
         return;
-    }else{
+    }else if(count == 4){
+        mode = temp;
+    }
+    else{
         return;
     }
 
