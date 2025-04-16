@@ -20,8 +20,8 @@ unsigned int ADC_Value;
 double temp;
 int toggle;
 int mode;
-
-
+int window;
+int time;
 
 
 
@@ -82,7 +82,7 @@ int main(void)
 void i2c_tx(void){
     if(toggle){
         convert_to_temp(ADC_Value);
-        UCB0TXBUF = thousands;
+        UCB0TXBUF = thousands;              //Thousands, hundreds, tens, and ones need to be ascii
         __delay_cycles(1000);
         UCB0TXBUF = hundreds;
         __delay_cycles(1000);
@@ -90,7 +90,11 @@ void i2c_tx(void){
         __delay_cycles(1000);
         UCB0TXBUF = ones;
         __delay_cycles(1000);
-        UCB0TXBUF = mode;
+        UCB0TXBUF = mode;                   //mode needs to be int
+        __delay_cycles(1000);
+        UCB0TXBUF = window;                 //window and time_in need to be ascii
+        __delay_cycles(1000);
+        UCB0TXBUF = time_in;
     }else{
         UCB0TXBUF = patternVal;
     }
