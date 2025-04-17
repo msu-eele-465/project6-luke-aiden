@@ -12,7 +12,7 @@ You will fill out this form:
 |----------------------------------------------------------------------------------------|--------|-----------|------------|
 | Introduction                                                                           | 1      |     1     |            |
 | Circuit diagram                                                                        | 1      |           |      1     |
-| System architecture diagram                                                            | 1      |     1     |            |
+| System architecture diagram                                                            | 1      |           |      1     |
 | High-level flowchart                                                                   | 1      |           |      1     |
 | Professional demo                                                                      | 2      |     1     |      1     |
 | Collect ambient temperature using the LM19                                             | 2      |           |      2     |
@@ -45,7 +45,7 @@ You will fill out this form:
 | When the system is actively heating, the lights should fill to the right               | 2      |           |      2     |
 | When the system is actively cooling, the lights should fill to the left                | 2      |           |      2     |
 | When not actively heating or cooling, the lights should be off                         | 2      |           |      2     |
-| Total                                                                                  | 60     |     31    |      29    |
+| Total                                                                                  | 60     |     30    |      30    |
 
 
 ## 🚀 Extra credit points
