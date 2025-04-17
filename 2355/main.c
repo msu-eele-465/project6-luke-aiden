@@ -21,7 +21,9 @@ double temp;
 int toggle;
 int mode;
 int window;
-int time;
+int time_in_3;
+int time_in_2;
+int time_in_1;
 
 
 
@@ -68,7 +70,7 @@ int main(void)
             UCB0I2CSA = 0x0068;         // Slave address = 0x68
             UCB0CTLW0 |= UCTXSTT;   // Generate START condition
 	        __delay_cycles(10000);
-        	UCB0TBCNT = 0x05;           // Send 1 byte of data
+        	UCB0TBCNT = 0x07;           // Send 1 byte of data
             toggle = 1;
             UCB0I2CSA = 0x0070;
             UCB0CTLW0 |= UCTXSTT;
@@ -94,7 +96,11 @@ void i2c_tx(void){
         __delay_cycles(1000);
         UCB0TXBUF = window;                 //window and time_in need to be ascii
         __delay_cycles(1000);
-        UCB0TXBUF = time_in;
+        UCB0TXBUF = time_in_3;
+        __delay_cycles(1000);
+        UCB0TXBUF = time_in_2;
+        __delay_cycles(1000);
+        UCB0TXBUF = time_in_1;
     }else{
         UCB0TXBUF = patternVal;
     }

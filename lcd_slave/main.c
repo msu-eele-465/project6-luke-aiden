@@ -5,17 +5,17 @@
 #include "lcd.h"
 
 int temp = 0;
-char thousands;
-char hundreds;
-char tens;
-int mode;
-int window;
-int time_3;
-int time_2;
-int time_1;
-char thousands_2;
-char hundreds_2;
-char tens_2;
+char thousands = 0;
+char hundreds = 0;
+char tens = 0;
+int mode = 0;
+int window = 0;
+int time_3 = 0;
+int time_2 = 0;
+int time_1 = 0;
+char thousands_2 = 0;
+char hundreds_2 = 0;
+char tens_2 = 0;
 
 
 //---------------LCD Functions-------------------------
@@ -100,10 +100,18 @@ void clear_next(void){
 }
 
 void write_mode(void){
-    write_address(0x00);
+    write_address(0x80 | 0x00);
     long_delay();
 
     switch (mode) {
+        case 0: // off
+            write_char('O');
+            write_char('F');
+            write_char('F');
+            clear_next();
+            clear_next();
+            break;
+
         case 1: // match
             write_char('M');
             write_char('A');
@@ -128,15 +136,7 @@ void write_mode(void){
             clear_next();
             break;
 
-        case 4: // off
-            write_char('O');
-            write_char('F');
-            write_char('F');
-            clear_next();
-            clear_next();
-            break;
-
-        case 5: // set
+        case 4: // set
             write_char('S');
             write_char('E');
             write_char('T');
@@ -149,7 +149,7 @@ void write_mode(void){
 
 void write_am(void){
     //write temp
-    write_address(0x08);
+    write_address(0x80 | 0x08);
     long_delay();
 
     write_char('A');
@@ -162,7 +162,7 @@ void write_am(void){
 
     write_char('.');
 
-    write_char(ten);
+    write_char(tens);
 
     write_char(0b11011111);         //Degree circle thing
 
@@ -171,7 +171,7 @@ void write_am(void){
 
 
 void write_window_time(void){
-    write_address(0x40);            //Address 40
+    write_address(0x80 | 0x40);            //Address 40
     long_delay();
 
     write_char(window);
@@ -186,7 +186,7 @@ void write_window_time(void){
 
 void write_pl(void){
     //write temp
-    write_address(0x48);
+    write_address(0x80 | 0x48);
     long_delay();
 
     write_char('P');
@@ -199,7 +199,7 @@ void write_pl(void){
 
     write_char('.');
 
-    write_char(ten_2);
+    write_char(tens_2);
 
     write_char(0b11011111);         //Degree circle thing
 
@@ -268,9 +268,11 @@ int main(void)
                                     //3809 cycles worst case senerio for plant write
                                     //= 119347
         write_mode();
-        write_am();
-        write_window_time();
-        write_pl();
+        if(mode){
+            write_am();
+            write_window_time();
+            write_pl();
+        }
     }
     
     return 0;
