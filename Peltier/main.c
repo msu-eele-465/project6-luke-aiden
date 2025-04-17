@@ -6,6 +6,9 @@
 #include <math.h>
 
 unsigned char data = 0x00;                    // code to be sent to peltier device
+int match_status = 0;
+int ambient_temp = 0;
+int plant_temp = 0;
 
 int main(void)
 {
@@ -31,6 +34,7 @@ int main(void)
                            P4OUT &= ~BIT2;
                            data = 0x01;
                            UCB0CTLW0 |= UCTXSTT;
+                           match_status = 0;
                            break;
 
                 // Cool
@@ -38,15 +42,13 @@ int main(void)
                            P4OUT &= ~BIT3;
                            data = 0x02;
                            UCB0CTLW0 |= UCTXSTT;
+                           match_status = 0;
                            break;
 
                 // Match Ambient
                 case 'C' : data = 0x03;
                            UCB0CTLW0 |= UCTXSTT;
-                           /*
-                            if hotter --> cool
-                            if cooler --> heat
-                           */
+                           match_status = 1;
                            break;
 
                 // Off
@@ -61,6 +63,17 @@ int main(void)
 
         }
     //}
+    //sent_temp(); // get temp from sensor
+    if (match_status = 1) {
+        if (ambient_temp > plant_temp) { // if ambient temp greater than plant temp, heat plant
+                P4OUT |= BIT3;
+                P4OUT &= ~BIT2;
+        }
+        else if (ambient_temp < plant_temp) { // if ambient temp less than plant temp, cool plant
+                P4OUT |= BIT2;
+                P4OUT &= ~BIT3;
+        }
+    }
     }
 }
 
