@@ -9,7 +9,7 @@ HeartBeat_init(){
     P6DIR |= BIT6;
     P6OUT &= ~BIT6;
 
-    TB0CTL = TBSSEL__ACLK | ID__1 | MC__UP | TBCLR;
+    TB0CTL |= TBSSEL__ACLK | ID__1 | MC__UP | TBCLR;
 
     TB0CCR0 = 32769;    // CCR0=32769
 

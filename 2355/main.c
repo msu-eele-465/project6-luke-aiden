@@ -142,6 +142,7 @@ void i2c_tx(void){
         __delay_cycles(1000);
         UCB0TXBUF = time_in_1;
     }else{
+        UCB0TXBUF = '1';
         //UCB0TXBUF = patternVal;           //logic from Luke for sending paterns to LED 
     }
 }
