@@ -9,11 +9,8 @@ HeartBeat_init(){
     P6DIR |= BIT6;
     P6OUT &= ~BIT6;
 
+    TB0CTL = TBSSEL__ACLK | ID__1 | MC__UP | TBCLR;
 
-    // Setup Timer
-    TB0CTL |= TBCLR;    // clear timers & dividers
-    TB0CTL |= TBSSEL__ACLK; // Source = ACLK
-    TB0CTL |= MC__UP;   // Mode=UP
     TB0CCR0 = 32769;    // CCR0=32769
 
     // Setup Timer Compare IRQ

@@ -91,44 +91,44 @@ inline int _read_keypad_rows(void)
     return row_read;
 }
 
-inline char _read_keypad_char(void)
+inline int _read_keypad_char(void)
 {
     int read = (_read_keypad_columns() | _read_keypad_rows());
 
     switch (read) {
 
         case 0x11:
-            return '1';
+            return 1;
         
         case 0x21:
-            return '2';
+            return 2;
 
         case 0x41:
-            return '3';
+            return 3;
 
         case 0x81:
             return 'A';
 
         case 0x12:
-            return '4';
+            return 4;
         
         case 0x22:
-            return '5';
+            return 5;
 
         case 0x42:
-            return '6';
+            return 6;
 
         case 0x82:
             return 'B';
 
         case 0x14:
-            return '7';
+            return 7;
 
         case 0x24:
-            return '8';
+            return 8;
 
         case 0x44:
-            return '9';
+            return 9;
 
         case 0x84:
             return 'C';
@@ -137,7 +137,7 @@ inline char _read_keypad_char(void)
             return '*';
 
         case 0x28:
-            return '0';
+            return 0;
 
         case 0x48:
             return '#';
@@ -153,7 +153,7 @@ inline char _read_keypad_char(void)
 
 inline bool check_unlock(void)
 {
-    char code[] = "\r1234";
+    int code[] = {0, 1, 2, 3, 4};  
     unsigned int i = 1;
 
     __delay_cycles(1000);
